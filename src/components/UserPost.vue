@@ -112,7 +112,7 @@ export default {
 }
 .publish-button {
   padding: 10px 20px;
-  background-color: #28a745;
+  background: #00bfa5;
   color: #fff;
   border: none;
   cursor: pointer;
@@ -120,7 +120,7 @@ export default {
   transition: background-color 0.3s;
 }
 .publish-button:hover {
-  background-color: #218838;
+  background-color: #04ad97;
 }
 .posts-list {
   display: grid;
