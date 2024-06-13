@@ -6,13 +6,13 @@
     </div>
     <nav>
       <ul>
-        <li>捡到</li>
-        <li>丢失</li>
-        <li>我的发布</li>
+        <li @click="filterType('found')">捡到</li>
+        <li @click="filterType('lost')">丢失</li>
+        <li @click="filterType('myPosts')">我的发布</li>
       </ul>
     </nav>
     <div class="search-container">
-      <input type="search" placeholder="请输入关键词">
+      <input type="search" placeholder="请输入关键词" v-model="searchQuery" @input="searchPosts">
     </div>
     <div class="user-info">
       <span>您好，张斌</span>
@@ -23,7 +23,20 @@
 
 <script>
 export default {
-  name: 'AppNavbar'
+  name: 'AppNavbar',
+  data() {
+    return {
+      searchQuery: ''
+    };
+  },
+  methods: {
+    searchPosts() {
+      this.$emit('search', this.searchQuery);
+    },
+    filterType(type) {
+      this.$emit('filterType', type);
+    }
+  }
 }
 </script>
 
@@ -53,6 +66,9 @@ nav ul {
   list-style: none;
   display: flex;
   gap: 15px;
+}
+nav ul li {
+  cursor: pointer; /* 添加鼠标指针样式 */
 }
 .search-container input {
   padding: 5px;

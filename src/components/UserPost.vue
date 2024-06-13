@@ -2,7 +2,7 @@
   <div class="posts-container">
     <div class="user-nav">
       <div class="filter-bar">
-        <button :class="{ active: filter === '全部' }" @click="filterCategory('全部')">全部</button>
+        <button :class="{ active: filter === 'all' }" @click="filterCategory('all')">全部</button>
         <button :class="{ active: filter === '证件类' }" @click="filterCategory('证件类')">证件类</button>
         <button :class="{ active: filter === '钥匙' }" @click="filterCategory('钥匙')">钥匙</button>
         <button :class="{ active: filter === '手机' }" @click="filterCategory('手机')">手机</button>
@@ -30,24 +30,37 @@ export default {
   data() {
     return {
       posts: [
-        { id: 1, time: "2024年06月12日 17:46", category: "证件类", title: "校内证件·校园卡", location: "梅园食堂", contact: "QQ 2892774004" },
-        { id: 2, time: "2024年06月08日 11:13", category: "证件类", title: "身份证件", location: "南二门附近", contact: "QQ 12345678" },
-        { id: 3, time: "2024年06月05日 07:55", category: "其他", title: "红双喜狂飙8乒乓拍", location: "信息学部四食堂附近", contact: "手机 879162187" },
-        { id: 4, time: "2024年06月03日 22:37", category: "其他", title: "外套加上耳机盒", location: "总图停车场所共享单车上", contact: "手机 15623581371" },
-        { id: 5, time: "2024年06月02日 18:18", category: "其他", title: "湖北大学大学生校园卡", location: "桂园操场", contact: "手机 18171422867" },
-        { id: 6, time: "2024年05月30日 19:44", category: "证件类", title: "校内证件·校园卡", location: "现在校园食堂附近", contact: "QQ 12345678" },
-        { id: 7, time: "2024年05月28日 14:13", category: "其他", title: "遮阳伞", location: "湖浪2舍外的哈啰单车上", contact: "手机 15623581371" }
+        { id: 1, time: "2024年06月12日 17:46", category: "证件类", title: "校内证件·校园卡", location: "梅园食堂", contact: "QQ 2892774004",type:'found' },
+        { id: 2, time: "2024年06月08日 11:13", category: "证件类", title: "身份证件", location: "南二门附近", contact: "QQ 12345678",type:'found' },
+        { id: 3, time: "2024年06月05日 07:55", category: "其他", title: "红双喜狂飙8乒乓拍", location: "信息学部四食堂附近", contact: "手机 879162187" ,type:'found'},
+        { id: 4, time: "2024年06月03日 22:37", category: "其他", title: "外套加上耳机盒", location: "总图停车场所共享单车上", contact: "手机 15623581371",type:'lost' },
+        { id: 5, time: "2024年06月02日 18:18", category: "其他", title: "湖北大学大学生校园卡", location: "桂园操场", contact: "手机 18171422867",type:'lost' },
+        { id: 6, time: "2024年05月30日 19:44", category: "证件类", title: "校内证件·校园卡", location: "现在校园食堂附近", contact: "QQ 12345678" ,type:'lost'},
+        { id: 7, time: "2024年05月28日 14:13", category: "其他", title: "遮阳伞", location: "湖浪2舍外的哈啰单车上", contact: "手机 15623581371" ,type:'lost'},
+        
         // 添加其他示例数据...
       ],
-      filter: '全部'
+      filter: 'all',
+      searchQuery: '',
+      currentUser: '张斌' // 假设当前用户为张斌
+   
     };
   },
   computed: {
     filteredPosts() {
-      if (this.filter === '全部') {
-        return this.posts;
+      let result = this.posts;
+      if (this.filter !== 'all') {
+        result = result.filter(post => post.category === this.filter);
       }
-      return this.posts.filter(post => post.category === this.filter);
+      if (this.searchQuery) {
+        result = result.filter(post => post.title.includes(this.searchQuery) || post.location.includes(this.searchQuery));
+      }
+      if (this.filterType === 'myPosts') {
+        result = result.filter(post => post.contact.includes(this.currentUser));
+      } else if (this.filterType) {
+        result = result.filter(post => post.type === this.filterType);
+      }
+      return result;
     }
   },
   methods: {

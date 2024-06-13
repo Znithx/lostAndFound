@@ -201,7 +201,7 @@ export default {
   background: #fff;
   padding: 20px;
   border-radius: 8px;
-  width: 400px;
+  width: 300px; /* 调整宽度 */
   max-width: 90%;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -214,20 +214,12 @@ export default {
   cursor: pointer;
 }
 .modal-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: #fff;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
-  z-index: 1000;
+  margin-bottom: 20px;
 }
 .modal-detail {
   display: flex;
   align-items: flex-start;
   margin-bottom: 10px;
-  margin-top: 50px; /* 预留给固定的标题区域 */
 }
 .modal-detail div {
   display: flex;
