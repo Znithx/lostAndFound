@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import PostCard from './PostCard.vue';
 
 export default {
@@ -29,21 +30,10 @@ export default {
   },
   data() {
     return {
-      posts: [
-        { id: 1, time: "2024年06月12日 17:46", category: "证件类", title: "校内证件·校园卡", location: "梅园食堂", contact: "QQ 2892774004",type:'found' },
-        { id: 2, time: "2024年06月08日 11:13", category: "证件类", title: "身份证件", location: "南二门附近", contact: "QQ 12345678",type:'found' },
-        { id: 3, time: "2024年06月05日 07:55", category: "其他", title: "红双喜狂飙8乒乓拍", location: "信息学部四食堂附近", contact: "手机 879162187" ,type:'found'},
-        { id: 4, time: "2024年06月03日 22:37", category: "其他", title: "外套加上耳机盒", location: "总图停车场所共享单车上", contact: "手机 15623581371",type:'lost' },
-        { id: 5, time: "2024年06月02日 18:18", category: "其他", title: "湖北大学大学生校园卡", location: "桂园操场", contact: "手机 18171422867",type:'lost' },
-        { id: 6, time: "2024年05月30日 19:44", category: "证件类", title: "校内证件·校园卡", location: "现在校园食堂附近", contact: "QQ 12345678" ,type:'lost'},
-        { id: 7, time: "2024年05月28日 14:13", category: "其他", title: "遮阳伞", location: "湖浪2舍外的哈啰单车上", contact: "手机 15623581371" ,type:'lost'},
-        
-        // 添加其他示例数据...
-      ],
+      posts: [],
       filter: 'all',
       searchQuery: '',
       currentUser: '张斌' // 假设当前用户为张斌
-   
     };
   },
   computed: {
@@ -55,11 +45,6 @@ export default {
       if (this.searchQuery) {
         result = result.filter(post => post.title.includes(this.searchQuery) || post.location.includes(this.searchQuery));
       }
-      if (this.filterType === 'myPosts') {
-        result = result.filter(post => post.contact.includes(this.currentUser));
-      } else if (this.filterType) {
-        result = result.filter(post => post.type === this.filterType);
-      }
       return result;
     }
   },
@@ -69,7 +54,20 @@ export default {
     },
     showPublishModal() {
       // 处理显示发布模态框的逻辑
+    },
+    fetchPosts() {
+      axios.get('http://localhost:3000/api/items')
+        .then(response => {
+          console.log("获取到的数据:", response.data); // 添加日志
+          this.posts = response.data;
+        })
+        .catch(error => {
+          console.error("无法获取物品信息", error);
+        });
     }
+  },
+  created() {
+    this.fetchPosts();
   }
 };
 </script>
