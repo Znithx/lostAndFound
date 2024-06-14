@@ -50,16 +50,16 @@ export default {
     return {
       searchQuery: '',
       showLogoutModal: false,
-      selectedType: '' // 新增的状态属性
+      selectedType: 'found', // 默认值为 'found'
     };
   },
   props: {
     username: {
       type: String,
       required: true
-    }
+    },
   },
-   methods: {
+  methods: {
     searchPosts() {
       axios.get('http://localhost:3000/api/items/search', {
         params: {
@@ -76,6 +76,7 @@ export default {
     filterType(type) {
       this.selectedType = type; // 更新选中的类型
       this.$emit('filterType', type);
+      localStorage.setItem('showType', type); // 更新 showType 并存储到 localStorage
     },
     confirmLogout() {
       // 在这里添加退出逻辑

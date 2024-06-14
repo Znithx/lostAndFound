@@ -36,22 +36,38 @@ export default {
       posts: [],
       filter: 'all',
       searchQuery: '',
-      currentUser: '张san', // 假设当前用户为张斌
-      isPublishModalVisible: false
+      username: '', // 假设当前用户为张斌
+      isPublishModalVisible: false,
+      localShowType: this.showType // 使用本地数据属性来存储 showType
     };
   },
   props: {
     currentFilter: {
       type: String,
       required: true
+    },
+    showType: {
+      type: String,
+      required: true
+    }
+  },
+  watch: {
+    showType(newVal) {
+      this.localShowType = newVal; // 当 showType prop 改变时，更新本地数据属性
     }
   },
   computed: {
     filteredPosts() {
       let result = this.posts;
+      // 根据 type 属性进行过滤
+      if (this.localShowType !== 'all') {
+        result = result.filter(post => post.type === this.localShowType);
+      }
+      // 根据 filter 进行分类过滤
       if (this.filter !== 'all') {
         result = result.filter(post => post.category === this.filter);
       }
+      // 根据搜索查询进行过滤
       if (this.searchQuery) {
         result = result.filter(post => post.title.includes(this.searchQuery) || post.location.includes(this.searchQuery));
       }
@@ -81,6 +97,8 @@ export default {
   },
   created() {
     this.fetchPosts();
+    this.username = localStorage.getItem('username') || '游客';
+    this.localShowType = localStorage.getItem('showType') || 'all';
   }
 };
 </script>
