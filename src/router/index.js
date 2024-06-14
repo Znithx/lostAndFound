@@ -4,6 +4,7 @@ import HomeView from '../views/HomeView.vue';
 import FirstView from '../views/FirstView.vue'; // 假设有一个Shouye.vue作为首页
 import UserLogin from '../components/LoginComponent';
 import UserRegister from '../components/RegisterComponent.vue';
+import PublishItem from '../components/PublishItem.vue';
 
 const routes = [
   { path: '/', name: 'home', component: HomeView },
@@ -13,6 +14,11 @@ const routes = [
     component: FirstView
   },
   { path: '/login', name: 'login', component: UserLogin },
+  {
+    path: '/publish',
+    name: 'PublishItem',
+    component: PublishItem
+  },
 
   { path: '/register', name: 'register', component: UserRegister }
 ];

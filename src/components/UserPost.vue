@@ -16,24 +16,28 @@
     <div class="posts-list">
       <PostCard v-for="post in filteredPosts" :key="post.id" :post="post"/>
     </div>
+    <PublishModal :isVisible="isPublishModalVisible" @close="closePublishModal"/>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import PostCard from './PostCard.vue';
+import PublishModal from './PublishModal.vue';
 
 export default {
   name: "UserPost",
   components: {
-    PostCard
+    PostCard,
+    PublishModal
   },
   data() {
     return {
       posts: [],
       filter: 'all',
       searchQuery: '',
-      currentUser: '张斌' // 假设当前用户为张斌
+      currentUser: '张斌', // 假设当前用户为张斌
+      isPublishModalVisible: false
     };
   },
   computed: {
@@ -53,7 +57,10 @@ export default {
       this.filter = category;
     },
     showPublishModal() {
-      // 处理显示发布模态框的逻辑
+      this.isPublishModalVisible = true;
+    },
+    closePublishModal() {
+      this.isPublishModalVisible = false;
     },
     fetchPosts() {
       axios.get('http://localhost:3000/api/items')
