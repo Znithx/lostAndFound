@@ -41,6 +41,7 @@ export default {
           email: this.email,
           password: this.password
         });
+
         if (response.data.success) {
           alert('注册成功');
           this.$router.push('/login');
@@ -48,6 +49,7 @@ export default {
           alert('注册失败: ' + response.data.message);
         }
       } catch (error) {
+        console.error('Registration error:', error);
         alert('注册失败: ' + error.message);
       }
     }

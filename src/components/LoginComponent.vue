@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+
 
 export default {
   name: 'LoginComponent',
@@ -31,13 +31,14 @@ export default {
   methods: {
     async login() {
       try {
-        const response = await axios.post('http://localhost:3000/api/login', {
+        const response = await this.$axios.post('/api/login', {
+       
           username: this.username,
           password: this.password
         });
         if (response.data.success) {
           alert('登录成功');
-          this.$router.push('/');
+          this.$router.push('/first');
         } else {
           alert('登录失败: ' + response.data.message);
         }
