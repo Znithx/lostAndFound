@@ -1,4 +1,4 @@
-const express = require('express');
+/* const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const multer = require('multer');
@@ -19,6 +19,7 @@ const upload = multer({ dest: 'uploads/' });
 // 路由
 const authRoutes = require('./routes/authRoutes');
 app.use('/api', authRoutes);
+app.use('/api', itemRoutes); // 使用新的路由文件
 
 // 图片上传路由
 app.post('/api/upload', upload.single('image'), (req, res) => {
@@ -50,6 +51,56 @@ app.get('/api/items', (req, res) => {
     res.json(results);
   });
 });
+
+// 添加物品信息
+app.post('/api/items', upload.array('image_path'), (req, res) => {
+  const { id, time, category, title, location, contact, type } = req.body;
+  const imagePaths = req.files.map(file => file.path);
+
+  const sql = 'INSERT INTO items (id, time, category, title, location, contact, type, image_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+  const values = [id, time, category, title, location, contact, type, JSON.stringify(imagePaths)];
+
+  db.query(sql, values, (err, results) => {
+    if (err) {
+      console.error('插入物品信息失败:', err);
+      res.status(500).send('插入物品信息失败');
+      return;
+    }
+    res.send('物品信息插入成功');
+  });
+});
+
+// 提供静态文件服务
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`服务器运行在 http://localhost:${PORT}`);
+}); */
+
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const multer = require('multer');
+const path = require('path');
+const db = require('./db'); // 确保路径正确
+require('dotenv').config();
+
+const app = express();
+
+// 中间件设置
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors()); // 使用 CORS 中间件
+
+// 设置 Multer 的存储路径
+const upload = multer({ dest: 'uploads/' });
+
+// 路由
+const authRoutes = require('./routes/authRoutes');
+const itemRoutes = require('./routes/itemRoutes'); // 确保正确引入
+app.use('/api', authRoutes);
+app.use('/api', itemRoutes); // 使用新的路由文件
 
 // 提供静态文件服务
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

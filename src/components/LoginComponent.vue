@@ -38,6 +38,8 @@ export default {
         });
         if (response.data.success) {
           alert('登录成功');
+          // 登录成功后，将用户名存储到 localStorage
+          localStorage.setItem('username', this.username);
           this.$router.push('/first');
         } else {
           alert('登录失败: ' + response.data.message);

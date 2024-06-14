@@ -7,7 +7,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import Post from './UserPost.vue';
 
 export default {
@@ -15,19 +14,11 @@ export default {
   components: {
     Post
   },
-  data() {
-    return {
-      posts: []
-    };
-  },
-  mounted() {
-    axios.get('http://localhost:5000/api/posts')
-      .then(response => {
-        this.posts = response.data;
-      })
-      .catch(error => {
-        console.error(error);
-      });
+  props: {
+    posts: {
+      type: Array,
+      required: true
+    }
   }
 };
 </script>

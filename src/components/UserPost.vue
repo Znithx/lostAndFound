@@ -36,9 +36,15 @@ export default {
       posts: [],
       filter: 'all',
       searchQuery: '',
-      currentUser: '张斌', // 假设当前用户为张斌
+      currentUser: '张san', // 假设当前用户为张斌
       isPublishModalVisible: false
     };
+  },
+  props: {
+    currentFilter: {
+      type: String,
+      required: true
+    }
   },
   computed: {
     filteredPosts() {

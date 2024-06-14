@@ -6,9 +6,9 @@
     </div>
     <nav>
       <ul>
-        <li @click="filterType('found')">捡到</li>
-        <li @click="filterType('lost')">丢失</li>
-        <li @click="filterType('myPosts')">我的发布</li>
+        <li :class="{ active: selectedType === 'found' }" @click="filterType('found')">捡到</li>
+        <li :class="{ active: selectedType === 'lost' }" @click="filterType('lost')">丢失</li>
+        <li :class="{ active: selectedType === 'myPosts' }" @click="filterType('myPosts')">我的发布</li>
       </ul>
     </nav>
     <div class="search-container">
@@ -16,50 +16,71 @@
       <input type="search" placeholder="请输入关键词" v-model="searchQuery" @input="searchPosts">
     </div>
     <div class="user-info">
-    <img src="@/assets/user-avatar.png" alt="user-avatar" class="user-avatar">
-    <span>您好，张斌</span>
-    <button class="logout-button" @click="showLogoutModal = true">
-      <i class="fas fa-sign-out-alt"></i>
-    </button>
-  </div>
-   <!-- 退出弹窗 -->
-  <div v-if="showLogoutModal" class="modal-overlay">
-    <div class="modal">
-      <div class="modal-header">
-        <h2>注意</h2>
-        <button class="close-button" @click="showLogoutModal = false">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p>确认退出登录吗?</p>
-      </div>
-      <div class="modal-footer">
-        <button @click="showLogoutModal = false">我点错了</button>
-        <button @click="confirmLogout">确认</button>
+      <img src="@/assets/user-avatar.png" alt="user-avatar" class="user-avatar">
+      <span>您好，{{ username }}</span>
+      <button class="logout-button" @click="showLogoutModal = true">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+    <!-- 退出弹窗 -->
+    <div v-if="showLogoutModal" class="modal-overlay">
+      <div class="modal">
+        <div class="modal-header">
+          <h2>注意</h2>
+          <button class="close-button" @click="showLogoutModal = false">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>确认退出登录吗?</p>
+        </div>
+        <div class="modal-footer">
+          <button @click="showLogoutModal = false">我点错了</button>
+          <button @click="confirmLogout">确认</button>
+        </div>
       </div>
     </div>
-  </div>
   </header>
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   name: 'AppNavbar',
   data() {
     return {
       searchQuery: '',
-      showLogoutModal: false
+      showLogoutModal: false,
+      selectedType: '' // 新增的状态属性
     };
   },
-  methods: {
+  props: {
+    username: {
+      type: String,
+      required: true
+    }
+  },
+   methods: {
     searchPosts() {
-      this.$emit('search', this.searchQuery);
+      axios.get('http://localhost:3000/api/items/search', {
+        params: {
+          query: this.searchQuery
+        }
+      })
+      .then(response => {
+        this.$emit('updatePosts', response.data);
+      })
+      .catch(error => {
+        console.error('搜索失败:', error);
+      });
     },
     filterType(type) {
+      this.selectedType = type; // 更新选中的类型
       this.$emit('filterType', type);
     },
     confirmLogout() {
       // 在这里添加退出逻辑
       console.log("用户已退出");
+      this.$router.push({ name: 'home' });
       this.showLogoutModal = false;
     }
   }
@@ -227,5 +248,19 @@ nav ul li:hover::after {
 .modal-footer button:last-child {
   background: #00bfa5;
   color: #fff;
+}
+
+nav ul li.active {
+  color: green; /* 选中时字体颜色 */
+}
+
+nav ul li.active::after {
+  content: '';
+  position: absolute;
+  width: 150%;
+  height: 5px; /* 下标线厚度 */
+  background-color: green; /* 下标线颜色 */
+  bottom: -20px; /* 调整下标线位置，使其与导航栏底部重合 */
+  left: -25%; /* 让下划线居中 */
 }
 </style>

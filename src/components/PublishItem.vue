@@ -21,6 +21,15 @@
         <textarea v-model="itemDetails" placeholder="请描述丢失或捡到的物品及特征" required></textarea>
       </div>
       <div class="form-group">
+        <label>物品状态</label>
+        <div>
+          <input type="radio" id="lost" value="丢失" v-model="itemStatus">
+          <label for="lost">丢失</label>
+          <input type="radio" id="found" value="捡到" v-model="itemStatus">
+          <label for="found">捡到</label>
+        </div>
+      </div>
+      <div class="form-group">
         <label>添加图片</label>
         <input type="file" @change="handleFileUpload" multiple>
       </div>
@@ -51,6 +60,7 @@ export default {
       category: '',
       itemName: '',
       itemDetails: '',
+      itemStatus: '', // 新增的单选选项
       location: '',
       lostTime: '',
       contactInfo: '',
@@ -69,6 +79,7 @@ export default {
       formData.append('category', this.category);
       formData.append('itemName', this.itemName);
       formData.append('itemDetails', this.itemDetails);
+      formData.append('itemStatus', this.itemStatus); // 添加单选选项的值
       formData.append('location', this.location);
       formData.append('lostTime', this.lostTime);
       formData.append('contactInfo', this.contactInfo);
@@ -80,7 +91,7 @@ export default {
       axios.post('http://localhost:3000/api/items', formData)
         .then(response => {
           console.log('物品发布成功:', response.data);
-          // 重定向到其他页面或显示成功信息
+          this.$router.push({ name: '/login' }); // 跳转到 FirstView 页面
         })
         .catch(error => {
           console.error('物品发布失败:', error);
