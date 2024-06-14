@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
-const mysql = require('mysql');
+const db = require('./db'); // 确保路径正确
 require('dotenv').config();
 
 const app = express();
@@ -15,24 +15,6 @@ app.use(cors()); // 使用 CORS 中间件
 
 // 设置 Multer 的存储路径
 const upload = multer({ dest: 'uploads/' });
-
-// 创建数据库连接
-const db = mysql.createConnection({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'lostandfound',
-});
-
-// 连接到数据库
-db.connect(err => {
-  if (err) {
-    console.error('无法连接到数据库:', err);
-    return;
-  }
-  console.log('成功连接到数据库');
-});
-
 
 // 路由
 const authRoutes = require('./routes/authRoutes');
