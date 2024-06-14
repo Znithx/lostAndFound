@@ -2,20 +2,19 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import axios from 'axios';
 import router from './router';
-
-// 分别导入组件
-import AppNavbar from './components/AppNavbar.vue';
-import PostCard from './components/PostCard.vue';
-import PostList from './components/PostList.vue';
-import UserPost from './components/UserPost.vue';
-
-const app = createApp(App);
-
+/* 
+import AppNavbar from '@/components/AppNavbar.vue';
+import PostCard from '@/components/PostCard.vue';
+import PostList from '@/components/PostList.vue';
+import UserPost from '@/components/UserPost.vue';
 // 注册组件
 app.component('AppNavbar', AppNavbar);
 app.component('PostCard', PostCard);
 app.component('PostList', PostList);
-app.component('UserPost', UserPost);
+app.component('UserPost', UserPost); */
+
+const app = createApp(App);
+
 // 设置 Axios 基础 URL
 axios.defaults.baseURL = 'http://localhost:3000';
 app.config.globalProperties.$axios = axios;

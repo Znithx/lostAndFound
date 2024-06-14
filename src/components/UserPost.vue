@@ -78,6 +78,7 @@ export default {
 .posts-container {
   padding: 20px;
   background-color: #f0f0f0; /* 灰色背景 */
+  margin-top: 6%;
 }
 .user-nav {
   display: flex;
