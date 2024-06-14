@@ -4,6 +4,7 @@
     <PostList :posts="filteredPosts" />
     <UserPost :currentFilter="currentFilter" :showType="showType" />
   </div>
+  
 </template>
 
 <script>
@@ -22,7 +23,7 @@ export default {
   data() {
     return {
       posts: [], // 用于存储所有帖子
-      filteredPosts: [], // 用于存储筛选后的帖子
+      filteredPosts: [], // 用于存储筛选后的帖子 11
       currentFilter: 'found', // 默认选中的过滤类型
       username: '', // 用于存储用户名
       showType: 'found' // 默认值为 'found'
