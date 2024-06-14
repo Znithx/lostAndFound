@@ -10,7 +10,7 @@
         <button :class="{ active: filter === '其他' }" @click="filterCategory('其他')">其他</button>
       </div>
       <button class="publish-button" @click="showPublishModal">
-        我要发布 +
+        我要发布 + 
       </button>
     </div>
     <div class="posts-list">
@@ -36,9 +36,10 @@ export default {
       posts: [],
       filter: 'all',
       searchQuery: '',
-      username: '', // 假设当前用户为张斌
       isPublishModalVisible: false,
-      localShowType: this.showType // 使用本地数据属性来存储 showType
+      localShowType: this.showType, // 使用本地数据属性来存储 showType
+      localUsername: this.username, // 使用本地数据属性来存储 username
+      filteredPosts: [] // 用于存储过滤后的帖子
     };
   },
   props: {
@@ -49,29 +50,22 @@ export default {
     showType: {
       type: String,
       required: true
+    },
+    username: {
+      type: String,
+      required: true
     }
   },
   watch: {
     showType(newVal) {
       this.localShowType = newVal; // 当 showType prop 改变时，更新本地数据属性
-    }
-  },
-  computed: {
-    filteredPosts() {
-      let result = this.posts;
-      // 根据 type 属性进行过滤
-      if (this.localShowType !== 'all') {
-        result = result.filter(post => post.type === this.localShowType);
-      }
-      // 根据 filter 进行分类过滤
-      if (this.filter !== 'all') {
-        result = result.filter(post => post.category === this.filter);
-      }
-      // 根据搜索查询进行过滤
-      if (this.searchQuery) {
-        result = result.filter(post => post.title.includes(this.searchQuery) || post.location.includes(this.searchQuery));
-      }
-      return result;
+      this.filterPosts(); // 重新过滤帖子
+    },
+    filter() {
+      this.filterPosts(); // 当 filter 改变时，重新过滤帖子
+    },
+    searchQuery() {
+      this.filterPosts(); // 当 searchQuery 改变时，重新过滤帖子
     }
   },
   methods: {
@@ -89,15 +83,47 @@ export default {
         .then(response => {
           console.log("获取到的数据:", response.data); // 添加日志
           this.posts = response.data;
+          this.filterPosts(); // 初始加载帖子后进行过滤
         })
         .catch(error => {
           console.error("无法获取物品信息", error);
         });
+    },
+    fetchUserPosts() {
+      axios.get(`http://localhost:3000/api/items/user/${this.localUsername}`)
+        .then(response => {
+          this.filteredPosts = response.data;
+        })
+        .catch(error => {
+          console.error('获取用户发布的物品信息失败:', error);
+        });
+    },
+    filterPosts() {
+      let result = this.posts;
+
+      if (this.localShowType !== 'all') {
+        if (this.localShowType === 'myPosts') {
+          this.fetchUserPosts(); // 调用 fetchUserPosts 方法
+          return;
+        } else {
+          result = result.filter(post => post.type === this.localShowType);
+        }
+      }
+
+      if (this.filter !== 'all') {
+        result = result.filter(post => post.category === this.filter);
+      }
+
+      if (this.searchQuery) {
+        result = result.filter(post => post.title.includes(this.searchQuery) || post.location.includes(this.searchQuery));
+      }
+
+      this.filteredPosts = result;
     }
   },
   created() {
     this.fetchPosts();
-    this.username = localStorage.getItem('username') || '游客';
+    this.localUsername = localStorage.getItem('username') || '游客';
     this.localShowType = localStorage.getItem('showType') || 'all';
   }
 };

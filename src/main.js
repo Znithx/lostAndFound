@@ -2,6 +2,9 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import axios from 'axios';
 import router from './router';
+
+import '@fortawesome/fontawesome-free/css/all.css';
+import '@fortawesome/fontawesome-free/js/all.js';
 /* 
 import AppNavbar from '@/components/AppNavbar.vue';
 import PostCard from '@/components/PostCard.vue';
