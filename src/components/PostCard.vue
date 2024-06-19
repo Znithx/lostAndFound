@@ -7,7 +7,7 @@
     <h2 class="post-title">{{ post.title }}</h2>
     <div class="post-details">
       <div class="post-photo">
-        <img src="@/assets/photo.png" alt="Photo Icon" class="photo-icon" />
+        <img :src="post.image_path" alt="Photo Icon" class="photo-icon" />
       </div>
       <div class="post-info">
         <div class="post-detail">
@@ -60,7 +60,7 @@
           <img src="@/assets/photo1.png" alt="Photo Icon" class="icon" />
           <div>
             <span>图片</span>
-            <img :src="post.photo" alt="Item Photo" class="detail-photo" />
+            <img :src="post.image_path" alt="Item Photo" class="detail-photo" />
           </div>
         </div>
         <div class="modal-detail">
@@ -105,6 +105,15 @@ export default {
 </script>
 
 <style scoped>
+
+.modal-detail .detail-photo {
+  width: 150px; /* 固定宽度 */
+  height: 150px; /* 固定高度 */
+  object-fit: cover; /* 保持图片的纵横比并裁剪 */
+  border-radius: 8px; /* 可选：添加圆角 */
+  margin-top: 10px; /* 可选：添加间距 */
+}
+
 .post-card {
   border: 1px solid #ddd;
   border-radius: 8px;

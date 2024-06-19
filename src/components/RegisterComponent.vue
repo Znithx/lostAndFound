@@ -46,11 +46,11 @@ export default {
           alert('注册成功');
           this.$router.push('/login');
         } else {
-          alert('注册失败: ' + response.data.message);
+          alert('注册失败: 已经存在当前用户名或者邮箱！');
         }
       } catch (error) {
         console.error('Registration error:', error);
-        alert('注册失败: ' + error.message);
+        alert('注册失败: 已经存在当前用户名或者邮箱！');
       }
     }
   }

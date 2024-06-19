@@ -5,16 +5,17 @@ const router = express.Router();
 const multer = require('multer');
 const db = require('../db');
 
+
 // 设置 Multer 的存储路径
 const upload = multer({ dest: 'uploads/' });
 
 // 添加物品信息
-router.post('/items', upload.array('image_path'), (req, res) => {
-  const { time, category, title, location, contact, type } = req.body;
-  const imagePaths = req.files.map(file => file.path);
+router.post('/items', upload.single('image'), (req, res) => {
+  const { time, category, title, location, contact, type, belong } = req.body;
+  const imageUrl = 'http://localhost:3000/' + req.file.path;
 
-  const sql = 'INSERT INTO items (time, category, title, location, contact, type, image_path) VALUES (?, ?, ?, ?, ?, ?, ?)';
-  const values = [time, category, title, location, contact, type, JSON.stringify(imagePaths)];
+  const sql = 'INSERT INTO items (time, category, title, location, contact, type,image_path, belong) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+  const values = [time, category, title, location, contact, type,imageUrl, belong];
 
   db.query(sql, values, (err, results) => {
     if (err) {
@@ -22,7 +23,8 @@ router.post('/items', upload.array('image_path'), (req, res) => {
       res.status(500).send('插入物品信息失败');
       return;
     }
-    res.send('物品信息插入成功');
+    res.json({imageUrl: imageUrl});
+    //res.send('物品信息插入成功');
   });
 });
 

@@ -18,7 +18,7 @@ exports.register = async (req, res) => {
         console.error('数据库错误:', err); // 打印详细错误信息
         return res.status(500).json({
           success: false,
-          message: '注册失败'
+          message: '注册失败,已经存在用户名或用户邮箱'
         });
       } else {
         return res.status(200).json({

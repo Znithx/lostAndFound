@@ -23,15 +23,16 @@
       <div class="form-group">
         <label>物品状态</label>
         <div>
-          <input type="radio" id="lost" value="丢失" v-model="itemStatus">
+          <input type="radio" id="lost" value="lost" v-model="itemStatus">
           <label for="lost">丢失</label>
-          <input type="radio" id="found" value="捡到" v-model="itemStatus">
+          <input type="radio" id="found" value="found" v-model="itemStatus">
           <label for="found">捡到</label>
         </div>
       </div>
       <div class="form-group">
-        <label>添加图片</label>
-        <input type="file" @change="handleFileUpload" multiple>
+        <input type="file" @change="onFileChange" />
+        <button>上传图片</button>
+        <img v-if="imageUrl" :src="imageUrl" alt="uploaded Image" />
       </div>
       <div class="form-group">
         <label>丢失地点</label>
@@ -64,34 +65,39 @@ export default {
       location: '',
       lostTime: '',
       contactInfo: '',
-      images: []
+      selectedFile:'',
+      imageUrl:'',
+      belong:''
     };
   },
+
   methods: {
     setCategory(category) {
       this.category = category;
     },
-    handleFileUpload(event) {
-      this.images = Array.from(event.target.files);
+    onFileChange(event){
+      this.selectedFile=event.target.files[0];
     },
     submitForm() {
       const formData = new FormData();
+      this.belong= localStorage.getItem('username');
       formData.append('category', this.category);
-      formData.append('itemName', this.itemName);
+      formData.append('title', this.itemName);
       formData.append('itemDetails', this.itemDetails);
-      formData.append('itemStatus', this.itemStatus); // 添加单选选项的值
+      formData.append('type', this.itemStatus); // 添加单选选项的值
       formData.append('location', this.location);
-      formData.append('lostTime', this.lostTime);
-      formData.append('contactInfo', this.contactInfo);
-      this.images.forEach((image, index) => {
-        formData.append(`images[${index}]`, image);
-      });
+      formData.append('time', this.lostTime);
+      formData.append('contact', this.contactInfo);
+      formData.append('belong',this.belong);
+      formData.append('image',this.selectedFile);
 
       // 发送 POST 请求到服务器
       axios.post('http://localhost:3000/api/items', formData)
         .then(response => {
           console.log('物品发布成功:', response.data);
-          this.$router.push({ name: '/login' }); // 跳转到 FirstView 页面
+          this.imageUrl=response.data.imageUrl;
+          location.assign("http://localhost:8080/first");
+          //this.$router.push({ name: '/login' }); // 跳转到 FirstView 页面
         })
         .catch(error => {
           console.error('物品发布失败:', error);
