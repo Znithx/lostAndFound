@@ -43,9 +43,15 @@ router.get('/items', (req, res) => {
 
 // 搜索物品信息
 router.get('/items/search', (req, res) => {
-  const { query } = req.query;
-  const sql = 'SELECT * FROM items WHERE title LIKE ? OR category LIKE ? OR location LIKE ?';
-  const values = [`%${query}%`, `%${query}%`, `%${query}%`];
+  const query = req.query.query;
+  const username = req.query.username; 
+  let sql = 'SELECT * FROM items WHERE title LIKE ? ';
+  const values = [`%${query}%`];
+  // 如果 username 存在，则添加到查询条件中
+  if (username) {
+    sql += ' AND belong = ?';
+    values.push(username);
+  }
 
   db.query(sql, values, (err, results) => {
     if (err) {
@@ -56,6 +62,8 @@ router.get('/items/search', (req, res) => {
     res.json(results);
   });
 });
+
+
 
 // 获取当前用户的物品信息
 router.get('/items/user/:username', (req, res) => {

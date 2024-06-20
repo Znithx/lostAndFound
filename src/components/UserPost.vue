@@ -35,7 +35,7 @@ export default {
     return {
       posts: [],
       filter: 'all',
-      searchQuery: '',
+      localSearchQuery: this.searchQuery || '', // 使用本地数据属性来存储 searchQuery
       isPublishModalVisible: false,
       localShowType: this.showType, // 使用本地数据属性来存储 showType
       localUsername: this.username, // 使用本地数据属性来存储 username
@@ -54,6 +54,10 @@ export default {
     username: {
       type: String,
       required: true
+    },
+    searchQuery: {
+      type: String,
+      required: false
     }
   },
   watch: {
@@ -64,8 +68,9 @@ export default {
     filter() {
       this.filterPosts(); // 当 filter 改变时，重新过滤帖子
     },
-    searchQuery() {
-      this.filterPosts(); // 当 searchQuery 改变时，重新过滤帖子
+    searchQuery(newQuery) {
+      this.localSearchQuery = newQuery; // 同步本地数据和 prop
+      this.fetchPosts(); // 当 searchQuery 改变时，重新获取数据
     }
   },
   methods: {
@@ -79,7 +84,10 @@ export default {
       this.isPublishModalVisible = false;
     },
     fetchPosts() {
-      axios.get('http://localhost:3000/api/items')
+      const params = {
+        query: this.localSearchQuery
+      };
+      axios.get('http://localhost:3000/api/items/search', { params })
         .then(response => {
           console.log("获取到的数据:", response.data); // 添加日志
           this.posts = response.data;
@@ -114,8 +122,8 @@ export default {
         result = result.filter(post => post.category === this.filter);
       }
 
-      if (this.searchQuery) {
-        result = result.filter(post => post.title.includes(this.searchQuery) || post.location.includes(this.searchQuery));
+      if (this.localSearchQuery) {
+        result = result.filter(post => post.title.includes(this.localSearchQuery) || post.location.includes(this.localSearchQuery));
       }
 
       this.filteredPosts = result;
@@ -125,6 +133,7 @@ export default {
     this.fetchPosts();
     this.localUsername = localStorage.getItem('username') || '游客';
     this.localShowType = localStorage.getItem('showType') || 'all';
+    this.localSearchQuery = localStorage.getItem('searchQuery') || '';
   }
 };
 </script>

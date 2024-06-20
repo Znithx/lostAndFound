@@ -12,12 +12,12 @@
       </ul>
     </nav>
     <div class="search-container">
-      <i class="fas fa-search search-icon"></i>
-      <input type="search" placeholder="请输入关键词" v-model="searchQuery" @input="searchPosts">
+      <i class="fas fa-search search-icon" @click="searchPosts"></i>
+      <input type="search" placeholder="请输入关键词" v-model="searchQuery" @keyup.enter="searchPosts">
     </div>
     <div class="user-info">
       <img src="@/assets/user-avatar.png" alt="user-avatar" class="user-avatar">
-      <span>您好，{{ username }}</span>
+      <span>您好，{{ localUsername }}  </span>
       <button class="logout-button" @click="showLogoutModal = true">
         <i class="fas fa-sign-out-alt"></i>
       </button>
@@ -48,6 +48,7 @@ export default {
   name: 'AppNavbar',
   data() {
     return {
+      localUsername:this.username,
       searchQuery: '',
       showLogoutModal: false,
       selectedType: 'found', // 默认值为 'found'
@@ -58,28 +59,43 @@ export default {
       type: String,
       required: true
     },
+    
   },
+created() {
+  this.localUsername = localStorage.getItem('username') || '游客';
+
+},
+
   methods: {
     searchPosts() {
-      axios.get('http://localhost:3000/api/items/search', {
-        params: {
-          query: this.searchQuery
-        }
-      })
-      .then(response => {
-        this.$emit('updatePosts', response.data);
-      })
-      .catch(error => {
-        console.error('搜索失败:', error);
-      });
+     
+      localStorage.setItem('searchQuery', this.searchQuery);
+      const showType = localStorage.getItem('showType');
+      const username = localStorage.getItem('username'); // 假设 username 保存在 localStorage 中
+
+      const params = {
+        query: this.searchQuery
+      };
+
+      if (showType === 'myPosts' && username) {
+        params.username = username;
+      }
+
+      axios.get('http://localhost:3000/api/items/search', { params })
+        .then(response => {
+          
+          this.$emit('updatePosts1', response.data); // Emit the search results
+        })
+        .catch(error => {
+          console.error('搜索失败:', error);
+        });
     },
     filterType(type) {
-      this.selectedType = type; // 更新选中的类型
+      this.selectedType = type;
       this.$emit('filterType', type);
-      localStorage.setItem('showType', type); // 更新 showType 并存储到 localStorage
+      localStorage.setItem('showType', type);
     },
     confirmLogout() {
-      // 在这里添加退出逻辑
       console.log("用户已退出");
       this.$router.push({ name: 'home' });
       this.showLogoutModal = false;
